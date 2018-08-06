@@ -1,22 +1,30 @@
 # Swift Plugin support
 - Status: Proposed
 
-The purpose of this proposal is to support ios plugin written by swift.
-I propose introducing two functions. One is editing bridging-header according to plugin.xml settings. The other is select
-application swift version according to config.xml.
-Note that we can specify swift version for the application. Plugins with different swift version can not imported simultaneously. This is contrary with cocoapod libraries in which swift version can be specified for each.
+## Overview
+
+The purpose of this proposal is to support iOS plugin written by Swift.
+I propose introducing two functions. 
+
+- The first function will edit the `Bridging-Header.h` according to the settings defined in `plugin.xml`. 
+
+- The second is setting the application’s Swift version according to the settings defined in `config.xml`.
+
+Note that we can specify the Swift version for the application. Plugins with different Swift version can not be imported simultaneously. This is contrary with CocoaPod libraries in which Swift version can be specified for each.
+
 
 ## Bridiging-Header
 
-Introduce the `bridging-header` attribute for the `header-file` tag in plugin.xml
+Introduce the `BridgingHeader` value for type attribute in the `header-file` tag in plugin.xml
 
 ex.
 ```
-<header-file src="src/ios/HOge-Briding-Header.h" bridging-header="true" />
+<header-file src="src/ios/Hoge-Briding-Header.h" type="BridgingHeader" />
 ```
-This attribute accepts boolean values. By default, when undefined, it is set to false.
 
-When the briding-header attribute is set to `true`, the `Briding-Header.h` file, located in cordova-ios template is updated as
+This specification is similar to the proposal https://issues.apache.org/jira/browse/CB-10071 where the value is `SwiftObjcBridingHeader`. The specification here is little simpler.
+
+When the `type` attribute is set to `BridgingHeader`, the `Briding-Header.h` file, located in cordova-ios template is updated as
 
 ```
 #import <Cordova/CDV.h>
@@ -28,17 +36,36 @@ This new feature, i.e. updating `Briding-Header.h` file, is working at
 `after plugin add`
 `after plugin rm`
 
+
+Do not introduce any other auxiliary files such as ios.json to manage plugins' BridingHeader files.
+Therefore if two plugins specify the sample BridingHeader file, although this hardly occurs, `updated Briding-Header.h` becomes as follows,
+
+```
+#import <Cordova/CDV.h>
+#import "Plugins/cordova-plugin-xxxx/Hoge-Bridging-Header.h"
+#import "Plugins/cordova-plugin-xxxx/Hoge-Bridging-Header.h"
+```
+
+After removing one plugin, this becomes
+
+```
+#import <Cordova/CDV.h>
+#import "Plugins/cordova-plugin-xxxx/Hoge-Bridging-Header.h"
+```
+
 ## Select application swift version
 
-Introducing the SwiftVersion for preference tag in config.xml.
+Introducing the `SwiftVersion` preference tag option in `config.xml`.
 
 ex.
 ```
 <preference name="SwiftVersion" value="4.1" />
 ```
 
-This is working to specify swift version in the application at
+This specifies the Swift version of the application, by calling the Xcode module. This is set after the following command(s):
 
-`after prepare`
+`cordova prepare`
 
-by using xcode module.
+Do not introduce any other auxiliary files such as ios.json to manage which swift versions is fixed or not.
+Therefore updating swift version is performed every time after doing `cordova prepare` if the above preference exists in `config.xml`.
+
