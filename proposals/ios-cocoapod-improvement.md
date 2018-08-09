@@ -55,7 +55,7 @@ ex.
    having `name`, `spec`, `tag`, `branch`, `commit`, `configurations`, `git`, `http`, podspec, path, swift-version,   options  attributes  
 
 
-ex.
+ex.1
 ```
 <pod name=”GoogleAnalytics” spec=”~> 3.1” />
 ```
@@ -64,8 +64,10 @@ becomes
 ```
 pod 'GoogleAnalytics', '~> 3.1'
 ```
-in Podfile
+in Podfile.
 
+
+ex.2
 ```
 <pod name=”Alamofire” path=”~/Documents/Alamofire” />
 ```
@@ -74,7 +76,8 @@ becomes
 ```
  pod ‘Alamofire’, :path => ‘~/Documents/Alamofire’
 ```
-in Podfile
+in Podfile.
+
 
 The attribute ‘options’ is a key-value list like
 
