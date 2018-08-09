@@ -26,6 +26,8 @@ ex.
 </podspec>
 ```
 
+Managing each plugin's cocoapod settings, pods.json file should be extended, because the current pods.json records only each library spec.
+
 ## The newly introduced tags
 
 - `<podspec>` tag  
@@ -185,6 +187,8 @@ If the developer adds pluginA and pluginB in this order, the resulting pods.json
 }
 ```
 
+
+If there is old pods.json file in the project, the file should be automatically updated to the new pods.json.
 
 ## Compatibility
 
