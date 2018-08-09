@@ -3,99 +3,112 @@
 
 ## Overview
 
-The purpose of this proposal is to improve Cocoapod support.
-This option would basically deprecate the framework usage of type=”podspec”.
-The benefits would allow better readability. Add default additional configuration settings as arguments to the to the pods element. For example <pods use-frameworks=true> but the use_framework! option is not required anymore since 1.5.0.
+The purpose of this proposal is to improve Cocoapod support by:
 
-ex.
+- Deprecate the `framework` usage of `type="podspec"`
+- Improve readability
+- Add missing default configurations
+
+## Example End Result
 ```
 <podspec>
   <config>
     <source url="https://github.com/brightcove/BrightcoveSpecs.git" />
-    <source url=”https://github.com/CocoaPods/Specs.git”/>
+    <source url="https://github.com/CocoaPods/Specs.git"/>
   </config>
 
   <pods>
-    <pod name=”PromiseKit” />
-    <pod name=”Foobar1” spec=”~> 2.0.0” />
-    <pod name=”Foobar2” git=”git@github.com:hoge/foobar1.git” />
-    <pod name=”Foobar3” git=”git@github.com:hoge/foobar2.git” branch=”next” />
-    <pod name=”Foobar4” swift-version=”4.1” />
-    <pod name=”Foobar5” swift-version=”3.0” />
+    <pod name="PromiseKit" />
+    <pod name="Foobar1" spec="~> 2.0.0" />
+    <pod name="Foobar2" git="git@github.com:hoge/foobar1.git" />
+    <pod name="Foobar3" git="git@github.com:hoge/foobar2.git" branch="next" />
+    <pod name="Foobar4" swift-version="4.1" />
+    <pod name="Foobar5" swift-version="3.0" />
   <pods>
 </podspec>
 ```
 
-Managing each plugin's cocoapod settings, pods.json file should be extended, because the current pods.json records only each library spec.
+## New Tags
+### `<podspec>`
+- Available in the global scope
+- Available in the platform scope
+- Has no attributes.
+- Has a body consisting of `<config>` tag, `<pods>` tag.
 
-## The newly introduced tags
+### `<config>`
+- Available in the `podspec` tag
+- Has no attributes
+- Has a body consisting of `<source>` tag
 
-- `<podspec>` tag  
-  available in global scope.  
-  having no attributes.  
-  having body consisting of `<config>` tag, `<pods>` tag.  
-
-- `<config>` tag  
-  available in `podspec` scope.  
-  having no attributes.  
-  having body consisting of `<source>` tag.   
-
-- `<pods>` tag  
-  available in `podspec` scope.  
-  having “use-frameworks” attribute.    
-  having “inhibit_all_warnings” attribute.  
-  having body consisting of `<pod>` tag.  
+### `<pods>`
+- Available in the `podspec` tag
+- Has “use-frameworks" attribute
+- Has “inhibit_all_warnings" attribute
+- Has body consisting of `<pod>` tag
 
 
-- `<source>` tag  
-   available in `config` scope.  
-   having  url attribute.  
-   having no body.  
+### `<source>`
+- Available in the `config` tag
+- Has `url` attribute
+- Has nobody content
 
-- `<pod>` tag  
-   available in `pods` scope.  
-   having `name`, `spec`, `tag`, `branch`, `commit`, `configurations`, `git`, `http`, podspec, path, swift-version,   options  attributes  
+### `<pod>`
+- Available in the `pods` tag
+- Avaialble attributes:
+  - `name`
+  - `spec`
+  - `tag`
+  - `branch`
+  - `commit`
+  - `configurations`
+  - `git`
+  - `http`
+  - `podspec`
+  - `path`
+  - `swift-version`
 
-
-ex.1
+## Usage Example
+### Example 1: Default Case
+The `plugin.xml` fie contains:
 ```
-<pod name=”GoogleAnalytics” spec=”~> 3.1” />
+<pod name="GoogleAnalytics" spec="~> 3.1" />
 ```
-in plugin.xml
-becomes
+
+On prepare, the `Podfile` file will become:
 ```
 pod 'GoogleAnalytics', '~> 3.1'
 ```
-in Podfile.
 
+### Example 2: Spec from file path
+The `plugin.xml` fie contains:
+```
+<pod name="Alamofire" path="~/Documents/Alamofire" />
+```
 
-ex.2
-```
-<pod name=”Alamofire” path=”~/Documents/Alamofire” />
-```
-in plugin.xml
-becomes
+On prepare, the `Podfile` file will become:
 ```
  pod ‘Alamofire’, :path => ‘~/Documents/Alamofire’
 ```
-in Podfile.
 
-
-The attribute ‘options’ is a key-value list like
+### Example 3: Options Usage
+The ‘options’ attribute value is written in a key-value pair system.
 
 ```
-<pod name=”Alamofire” options=”:git => 'https://github.com/Alamofire/Alamofire.git', :tag => '3.1.1'” />
+<pod name="Alamofire" options=":git => 'https://github.com/Alamofire/Alamofire.git', :tag => '3.1.1'" />
 ```
 
-This is because there are so many features in CocoaPod. It is difficult to keep track of all.  Most of them have not been used much.
-For example, CocoaPod supports svn (:svn) and its head (:head), mercurial (:hg) and  bazaar (:bzr).
+Because there are so many features that CocoaPod supplies, it would be difficult to keep track of all.  
+Some of them may also be less likely used over others for example:
+- svn (:svn) and its head (:head)
+- mercurial (:hg)
+- bazaar (:bzr).
 
 
 
 ## Extending pods.json
+Since the current `pods.json` file only records each library spec, it must be extended to support the ability to manage the settings of each pod.
 
-The current pods.json file records only cocoapods libraries' infomation, such as
-
+## Current File Structure
 ```
 {
    "SwiftMessages": {
@@ -107,25 +120,25 @@ The current pods.json file records only cocoapods libraries' infomation, such as
 }
 ```
 
-Extending this pods.json file to manage three sections. The one section is for configs, the another section is for sources and the last one is for libraries.
 
+## New File Structure
 ```
 {
-    "configs": { 
+    "configs": {
       "use-frameworks: true" : {
         "config": "use-frameworks: true",
         "count": 1
-      }, 
+      },
       "inhibit_all_warnings!": {
         "config": "inhibit_all_warnings!",
         "count": 1
-      } 
+      }
     },
     "sources": {
 "https://github.com/CocoaPods/Specs.git": {
-	  "source" : "https://github.com/CocoaPods/Specs.git",
-	  "count" : 1
-	},
+      "source" : "https://github.com/CocoaPods/Specs.git",
+      "count" : 1
+    },
       …
     },
     "libraries": {
@@ -133,49 +146,59 @@ Extending this pods.json file to manage three sections. The one section is for c
         "name": "SwiftMessages",
         "type": "podspec",
         "spec": "~> 4.1",
-	      "swift-version": “4.1”,
+        "swift-version": “4.1",
         "count": 1
       }
     }
 }
 ```
+To support the new ability, the `pods.json` file will be broken into three primary sections. 
 
-The count parameter indicates the number of plugins having Podfile settings.
+*Config Section*
+The section will contain the overall Cocoapods configurations. For example: `use-framework`.
 
-Podfile is modified according to this pods.json file. All the elements with count > 0 is added in Podfile.  
+*Sources Section*
+The source section will contain a list of known sources where pods come from. In some situations, a user may have their own private registry which contains private pods.
 
-When the developer removes a plugin, the corresponding count parameter is decreased. If the count becomes zero, the element is removed.
+*Libraries Section*
+This section is identical to the original file with the added properties.
 
-If the same key with different element is about to be added, only count parameter is increased for previous element with same key and show warnings.
+### Other Notes
+- The `count` parameter in the new `pods.json` file structure indicates the number of plugins having Podfile settings.
+- `Podfile` is modified according to this `pods.json` file.
+- All the elements with the `count > 0` is added in Podfile.
+- If the same key with a different element is about to be added, only the count parameter is increased for the previous element with the same key and show warnings.
 
-For example pluginA has
+*For example* 
+
+pluginA has
 
 ```
 <podspec>
   <pods>
-    <pod name=”Foobar1” spec=”~> 2.0.0” />
+    <pod name="Foobar1" spec="~> 2.0.0" />
   <pods>
 </podspec>
 ```
 
-and pluginB has
+pluginB has
 
 ```
 <podspec>
   <pods>
-    <pod name=”Foobar1” spec=”~> 3.0.0” />
+    <pod name="Foobar1" spec="~> 3.0.0" />
   <pods>
 </podspec>
 ```
 
-If the developer adds pluginA and pluginB in this order, the resulting pods.json becomes
+If the developer adds pluginA and pluginB in this order, the resulting `pods.json` becomes
 
 ```
 {
-    "configs": { 
+    "configs": {
     },
     "sources": {
-	  },
+      },
     "libraries": {
       "Foobar1": {
         "name": "Foobar1",
@@ -188,11 +211,12 @@ If the developer adds pluginA and pluginB in this order, the resulting pods.json
 ```
 
 
-If there is old pods.json file in the project, the file should be automatically updated to the new pods.json.
+- If there is an old `pods.json` file in the project, the file should be automatically updated to the new pods.json.
+- When the developer removes a plugin, the corresponding count parameter is decreased. If the count becomes zero, the element is removed.
 
 ## Compatibility
 
-The framework tag with type=”podspec” is still available for the compatibility.
+The framework tag with type="podspec" is still available for the compatibility.
 
 ```
    <framework src="SwiftMessages" type="podspec" spec="~> 4.1" />
