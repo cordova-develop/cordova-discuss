@@ -28,34 +28,34 @@ ex.
 
 ## The newly introduced tags
 
-- `<podspec>` tag
-  available in global scope.
-  having no attributes
-  having body consisting of `<config>` tag, `<pods>` tag.
+- `<podspec>` tag  
+  available in global scope.  
+  having no attributes.  
+  having body consisting of `<config>` tag, `<pods>` tag.  
 
-- `<config>` tag
-  available in `podspec` scope.
-  having no attributes
-  having body consisting of `<source>` tag,
+- `<config>` tag  
+  available in `podspec` scope.  
+  having no attributes.  
+  having body consisting of `<source>` tag.   
 
-- `<pods>` tag
-  available in `podspec` scope.
-  having “use-frameworks” attribute
-  having “inhibit_all_warnings” attribute
-  having body consisting of `<pod>` tag.
+- `<pods>` tag  
+  available in `podspec` scope.  
+  having “use-frameworks” attribute.    
+  having “inhibit_all_warnings” attribute.  
+  having body consisting of `<pod>` tag.  
 
 
-- `<source>` tag
-   available in `config` scope.
-   having  url attribute
-   having no body
+- `<source>` tag  
+   available in `config` scope.  
+   having  url attribute.  
+   having no body.  
 
-- `<pod>` tag
-   available in `pods` scope.
-   having `name`, `spec`, `tag`, `branch`, `commit`, `configurations`, `git`, `http`, podspec, path, swift-version, options  attributes
+- `<pod>` tag  
+   available in `pods` scope.  
+   having `name`, `spec`, `tag`, `branch`, `commit`, `configurations`, `git`, `http`, podspec, path, swift-version,   options  attributes  
 
-examples,
 
+ex.
 ```
 <pod name=”GoogleAnalytics” spec=”~> 3.1” />
 ```
