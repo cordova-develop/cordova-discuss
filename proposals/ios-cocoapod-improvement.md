@@ -9,7 +9,7 @@ The purpose of this proposal is to improve Cocoapod support by:
 - Improve readability
 - Add missing default configurations
 
-## Example End Result
+## Example End Result in plugin.xml
 ```
 <podspec>
   <config>
@@ -42,8 +42,8 @@ The purpose of this proposal is to improve Cocoapod support by:
 
 ### `<pods>`
 - Available in the `podspec` tag
-- Has “use-frameworks" attribute
-- Has “inhibit_all_warnings" attribute
+- Has “use-frameworks" attribute, of which the value is fixed `true`.
+- Has “inhibit_all_warnings" attribute, of which the value is fixed `true`. 
 - Has body consisting of `<pod>` tag
 
 
@@ -125,12 +125,12 @@ Since the current `pods.json` file only records each library spec, it must be ex
 ```
 {
     "configs": {
-      "use-frameworks: true" : {
-        "config": "use-frameworks: true",
+      "use-frameworks" : {
+        "config": "use-frameworks",
         "count": 1
       },
-      "inhibit_all_warnings!": {
-        "config": "inhibit_all_warnings!",
+      "inhibit_all_warnings": {
+        "config": "inhibit_all_warnings",
         "count": 1
       }
     },
@@ -210,9 +210,11 @@ If the developer adds pluginA and pluginB in this order, the resulting `pods.jso
 }
 ```
 
-
 - If there is an old `pods.json` file in the project, the file should be automatically updated to the new pods.json.
 - When the developer removes a plugin, the corresponding count parameter is decreased. If the count becomes zero, the element is removed.
+
+- This new feature works for only plugin.xml, not for config.xml. This is for avoiding complexity. If we support config.xml we should detect all changes of config.xml every time when doing `cordova prepare` and find differences with previous config.xml settings to update `pods.json`. This process becomes very complex like a config_munge in cordova-common where `count`  does not seem to work well.
+ Supporting only plugin.xml is rather simple because we should check `plugin add` and `plugin rm` only. 
 
 ## Compatibility
 
