@@ -1,15 +1,15 @@
-# Cocoapod Improvement
+# CocoaPods Improvement
 - Status: Proposed
 
 ## Overview
 
-The purpose of this proposal is to improve Cocoapod support by:
+The purpose of this proposal is to improve CocoaPods support by:
 
-- Deprecate the `framework` usage of `type="podspec"`
+- Deprecate the `framework` tag usage of `type="podspec"`
 - Improve readability
 - Add missing default configurations
 
-## Example End Result in plugin.xml
+## Example End Result in `plugin.xml`
 ```
 <podspec>
   <config>
@@ -32,8 +32,10 @@ The purpose of this proposal is to improve Cocoapod support by:
 ### `<podspec>`
 - Available in the global scope
 - Available in the platform scope
-- Has no attributes.
-- Has a body consisting of `<config>` tag, `<pods>` tag.
+- Has no attributes
+- Has a body consisting of two tags
+  - `<config>`
+  - `<pods>`
 
 ### `<config>`
 - Available in the `podspec` tag
@@ -42,15 +44,15 @@ The purpose of this proposal is to improve Cocoapod support by:
 
 ### `<pods>`
 - Available in the `podspec` tag
-- Has “use-frameworks" attribute, of which the value is fixed `true`.
-- Has “inhibit_all_warnings" attribute, of which the value is fixed `true`. 
-- Has body consisting of `<pod>` tag
+- Has `use-frameworks` attribute, of which the default value is `true`.
+- Has `inhibit_all_warnings` attribute, of which the default value is `true`.
+- Has a body consisting of `<pod>` tag
 
 
 ### `<source>`
 - Available in the `config` tag
 - Has `url` attribute
-- Has nobody content
+- Has no content in the body.
 
 ### `<pod>`
 - Available in the `pods` tag
@@ -91,21 +93,21 @@ On prepare, the `Podfile` file will become:
 ```
 
 ### Example 3: Options Usage
-The ‘options’ attribute value is written in a key-value pair system.
+The `options` attribute value is written in a key-value pair system.
 
 ```
 <pod name="Alamofire" options=":git => 'https://github.com/Alamofire/Alamofire.git', :tag => '3.1.1'" />
 ```
 
-Because there are so many features that CocoaPod supplies, it would be difficult to keep track of all.  
+Because there are so many features that CocoaPods supplies, it would be difficult to keep track of all.  
 Some of them may also be less likely used over others for example:
-- svn (:svn) and its head (:head)
-- mercurial (:hg)
-- bazaar (:bzr).
+- svn (`:svn`) and its head (`:head`)
+- mercurial (`:hg`)
+- bazaar (`:bzr`).
 
 
 
-## Extending pods.json
+## Extending `pods.json`
 Since the current `pods.json` file only records each library spec, it must be extended to support the ability to manage the settings of each pod.
 
 ## Current File Structure
@@ -154,13 +156,13 @@ Since the current `pods.json` file only records each library spec, it must be ex
 ```
 To support the new ability, the `pods.json` file will be broken into three primary sections. 
 
-*Config Section*
+**Config Section**
 The section will contain the overall Cocoapods configurations. For example: `use-framework`.
 
-*Sources Section*
+**Sources Section**
 The source section will contain a list of known sources where pods come from. In some situations, a user may have their own private registry which contains private pods.
 
-*Libraries Section*
+**Libraries Section**
 This section is identical to the original file with the added properties.
 
 ### Other Notes
@@ -169,7 +171,7 @@ This section is identical to the original file with the added properties.
 - All the elements with the `count > 0` is added in Podfile.
 - If the same key with a different element is about to be added, only the count parameter is increased for the previous element with the same key and show warnings.
 
-*For example* 
+**For example**
 
 pluginA has
 
@@ -213,15 +215,17 @@ If the developer adds pluginA and pluginB in this order, the resulting `pods.jso
 - If there is an old `pods.json` file in the project, the file should be automatically updated to the new pods.json.
 - When the developer removes a plugin, the corresponding count parameter is decreased. If the count becomes zero, the element is removed.
 
-- This new feature works for only plugin.xml, not for config.xml. This is for avoiding complexity. If we support config.xml we should detect all changes of config.xml every time when doing `cordova prepare` and find differences with previous config.xml settings to update `pods.json`. This process becomes very complex like a config_munge in cordova-common where `count`  does not seem to work well.
- Supporting only plugin.xml is rather simple because we should check `plugin add` and `plugin rm` only. 
+- This new feature works only in `plugin.xml`, not in `config.xml`. This is for avoiding complexity. If we support `config.xml` we should detect all changes of `config.xml` every time when doing `cordova prepare` and find differences with previous `config.xml` settings to update `pods.json`. This process becomes very complex like a config_munge in `cordova-common` where `count` does not seem to work well.
+ Supporting only `plugin.xml` is rather simple because we should check `plugin add` and `plugin rm` only. 
 
 ## Compatibility
 
-The framework tag with type="podspec" is still available for the compatibility.
+The `framework` tag with `type="podspec"` is still available for the compatibility.
 
 ```
    <framework src="SwiftMessages" type="podspec" spec="~> 4.1" />
 ```
 
-Combining new and old formula in plugin.xml, then update Podfile.
+Combining new and old formula in `plugin.xml` will update Podfile.
+
+In a later release, we can official remove the old formula compeltely.
