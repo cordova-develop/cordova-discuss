@@ -44,8 +44,8 @@ The purpose of this proposal is to improve CocoaPods support by:
 
 ### `<pods>`
 - Available in the `podspec` tag
-- Has `use-frameworks` attribute, of which the default value is `true`.
-- Has `inhibit_all_warnings` attribute, of which the default value is `true`.
+- Has `use-frameworks` attribute, of which the default value is `` (empty).
+- Has `inhibit_all_warnings` attribute, of which the default value is `` (empty).
 - Has a body consisting of `<pod>` tag
 
 
@@ -68,6 +68,7 @@ The purpose of this proposal is to improve CocoaPods support by:
   - `podspec`
   - `path`
   - `swift-version`
+  - `options`
 
 ## Usage Example
 ### Example 1: Default Case
@@ -126,13 +127,13 @@ Since the current `pods.json` file only records each library spec, it must be ex
 ## New File Structure
 ```
 {
-    "configs": {
+    "declarations": {
       "use-frameworks" : {
-        "config": "use-frameworks",
+        "declaration": "use-frameworks",
         "count": 1
       },
       "inhibit_all_warnings": {
-        "config": "inhibit_all_warnings",
+        "declaration": "inhibit_all_warnings",
         "count": 1
       }
     },
@@ -156,8 +157,8 @@ Since the current `pods.json` file only records each library spec, it must be ex
 ```
 To support the new ability, the `pods.json` file will be broken into three primary sections. 
 
-**Config Section**
-The section will contain the overall Cocoapods configurations. For example: `use-framework`.
+**Declarations Section**
+The section will contain the overall Cocoapods declarations. For example: `use-framework`.
 
 **Sources Section**
 The source section will contain a list of known sources where pods come from. In some situations, a user may have their own private registry which contains private pods.
@@ -197,7 +198,7 @@ If the developer adds pluginA and pluginB in this order, the resulting `pods.jso
 
 ```
 {
-    "configs": {
+    "declarations": {
     },
     "sources": {
       },
