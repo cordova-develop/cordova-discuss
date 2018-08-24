@@ -17,7 +17,7 @@ The purpose of this proposal is to improve CocoaPods support by:
     <source url="https://github.com/CocoaPods/Specs.git"/>
   </config>
 
-  <pods>
+  <pods use-frameworks="true">
     <pod name="PromiseKit" />
     <pod name="Foobar1" spec="~> 2.0.0" />
     <pod name="Foobar2" git="git@github.com:hoge/foobar1.git" />
@@ -138,10 +138,10 @@ Since the current `pods.json` file only records each library spec, it must be ex
       }
     },
     "sources": {
-"https://github.com/CocoaPods/Specs.git": {
-      "source" : "https://github.com/CocoaPods/Specs.git",
-      "count" : 1
-    },
+      "https://github.com/CocoaPods/Specs.git": {
+        "source" : "https://github.com/CocoaPods/Specs.git",
+        "count" : 1
+      },
       …
     },
     "libraries": {
