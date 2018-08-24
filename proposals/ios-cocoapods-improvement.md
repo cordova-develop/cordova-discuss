@@ -44,8 +44,8 @@ The purpose of this proposal is to improve CocoaPods support by:
 
 ### `<pods>`
 - Available in the `podspec` tag
-- Has `use-frameworks` attribute, of which the default value is `` (empty).
-- Has `inhibit_all_warnings` attribute, of which the default value is `` (empty).
+- Has `use-frameworks` attribute, of which the default value is `` (empty). The value `true` means to use.
+- Has `inhibit_all_warnings` attribute, of which the default value is `` (empty). The value `true` means to use.
 - Has a body consisting of `<pod>` tag
 
 
